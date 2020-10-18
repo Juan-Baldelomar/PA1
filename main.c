@@ -51,7 +51,6 @@ void testTreeInsertion2(){
 
 void testTreeInsertion3(){
     RBTree *rbTree = createTree();
-    Nodo *nodo;
     int n = 100;
     for (int i = 0; i<n; i++){
         int x = getRandom(1, 100);
@@ -66,10 +65,80 @@ void testTreeInsertion3(){
 }
 
 
+void testTreeDeletion(){
+    RBTree *rbTree = createTree();
+    int n = 100;
+    int nodesToDelete[100];
+    for (int i = 0; i<n; i++){
+        int x = getRandom(1, 100);
+        nodesToDelete[i] = x;
+        put(rbTree, x, x);
+    }
+
+    delete(rbTree, nodesToDelete[50]);
+    delete(rbTree, nodesToDelete[20]);
+    delete(rbTree, nodesToDelete[5]);
+    delete(rbTree, nodesToDelete[0]);
+
+    traverse(rbTree);
+    int height = getHeight(rbTree);
+    int black_h = getBlackHeight(rbTree);
+    printf("height: %d  black height: %d\n", height, black_h);
+    printf("testing property 4\n");
+    testProperty4(rbTree, rbTree->root);
+}
+
+void testTreeDeletion2(){
+    RBTree *rbTree = createTree();
+    int n = 100;
+    int nodesToDelete[100];
+    for (int i = 0; i<n; i++){
+        int x = getRandom(1, 100);
+        nodesToDelete[i] = x;
+        put(rbTree, x, x);
+    }
+
+    for(int i = 0; i<n; i++){
+        delete(rbTree, nodesToDelete[i]);
+    }
+
+    traverse(rbTree);
+    int height = getHeight(rbTree);
+    int black_h = getBlackHeight(rbTree);
+    printf("height: %d  black height: %d\n", height, black_h);
+    printf("testing property 4\n");
+    testProperty4(rbTree, rbTree->root);
+}
+
+void testTreeDeletion3(){
+    RBTree *rbTree = createTree();
+    int n = 100;
+    int nodesToDelete[100];
+    put(rbTree, 2, 2);
+    put(rbTree, 1, 1);
+    put(rbTree, 3, 3);
+
+    Nodo *nodo = search(rbTree, 1);
+    nodo->color = 'B';
+    nodo = search(rbTree, 3);
+    nodo->color = 'B';
+
+    delete(rbTree, 1);
+
+    traverse(rbTree);
+    int height = getHeight(rbTree);
+    int black_h = getBlackHeight(rbTree);
+    printf("height: %d  black height: %d\n", height, black_h);
+    printf("testing property 4\n");
+    testProperty4(rbTree, rbTree->root);
+}
+
+
 int main() {
     srand(time(0));
-    testTreeInsertion();
-    testTreeInsertion2();
-    testTreeInsertion3();
+    //testTreeInsertion();
+    //testTreeInsertion2();
+    //testTreeInsertion3();
+    testTreeDeletion2();
     return 0;
 }

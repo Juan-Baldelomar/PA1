@@ -132,6 +132,92 @@ void insertFixup(RBTree *rbTree, Nodo *z){
     rbTree->root->color = 'B';
 }
 
+void transplant(RBTree *rbTree, Nodo *u, Nodo *v){
+    if (u->parent == rbTree->NIL)
+        rbTree->root = v;
+    else if (u == u->parent->left)
+        u->parent->left = v;
+    else
+        u->parent->right = v;
+
+    v->parent = u->parent;
+}
+
+Nodo *TreeMinimum(RBTree *rbTree, Nodo *root){
+    Nodo *min = root;
+    while(min->left != rbTree->NIL)
+        min = min->left;
+    return min;
+}
+
+Nodo *search(RBTree *rbTree, int key){
+    Nodo *currentNode = rbTree->root;
+    while (key != currentNode->key && currentNode != rbTree->NIL){
+        if (key < currentNode->key)
+            currentNode = currentNode->left;
+        else
+            currentNode = currentNode->right;
+    }
+    return currentNode;
+}
+
+void deleteFixup(RBTree *rbTree, Nodo *x){
+    Nodo *brother;
+    while(x != rbTree->root && x->color == 'B'){
+        if (x == x->parent->left){
+            brother = x->parent->right;
+            if (brother->color == 'R'){
+                brother->color = 'B';
+                x->parent->color = 'R';
+                leftRotate(rbTree, x->parent);
+                brother = x->parent->right;
+            }
+            //El hijo izq y der de el hermano existen por la propiedad de las alturas h_b antes de la eliminacion
+            if (brother->left->color == 'B' && brother->right->color == 'B'){
+                brother->color = 'R';
+                x = x->parent;
+            } else{
+                if (brother->right->color == 'B'){
+                    brother->left->color = 'B';
+                    brother->color = 'R';
+                    rightRotate(rbTree, brother);
+                    brother = x->parent->right;
+                }
+                brother->color = x->parent->color;
+                x->parent->color = 'B';
+                brother->right->color = 'B';
+                leftRotate(rbTree, x->parent);
+                x = rbTree->root;
+            }
+        } else{
+            brother = x->parent->left;
+            if (brother->color == 'R'){
+                brother->color = 'B';
+                x->parent->color = 'R';
+                rightRotate(rbTree, x->parent);
+                brother = x->parent->left;
+            }
+            //El hijo izq y der de el hermano existen por la propiedad de las alturas h_b antes de la eliminacion
+            if (brother->left->color == 'B' && brother->right->color == 'B'){
+                brother->color = 'R';
+                x = x->parent;
+            } else{
+                if (brother->left->color == 'B'){
+                    brother->right->color = 'B';
+                    brother->color = 'R';
+                    leftRotate(rbTree, brother);
+                    brother = x->parent->left;
+                }
+                brother->color = x->parent->color;
+                x->parent->color = 'B';
+                brother->left->color = 'B';
+                rightRotate(rbTree, x->parent);
+                x = rbTree->root;
+            }
+        }
+    }// x!= root && x.color == B
+    x->color = 'B';
+}
 
 void put(RBTree *rbTree, int key, int val){
     Nodo *z = createNode(key, val);
@@ -158,6 +244,49 @@ void put(RBTree *rbTree, int key, int val){
 }
 
 
+void deleteTreeNode(RBTree *rbTree, Nodo *z){
+    Nodo *y = z;
+    Nodo *x;
+    char y_org_col = y->color;
+    if (z->left == rbTree->NIL){
+        x = z->right;
+        transplant(rbTree, z, z->right);
+    }else if (z->right == rbTree->NIL){
+        x = z->left;
+        transplant(rbTree, z, z->left);
+    }else{
+        y = TreeMinimum(rbTree, z->right);
+        y_org_col = y->color;
+        x = y->right;
+        if (y->parent == z)                         // si y es el hijo derecho de z (el nodo a eliminar)
+            x->parent = y;
+        else{                                       // solo cuando y no es el hijo derecho de z
+
+            transplant(rbTree, y, y->right);        // x (y.right) ocupa la posicion de y
+            y->right = z->right;                    // y ocupa la posicion de z, por lo tanto se debe redefinir su hijo derecho
+            y->right->parent = y;
+        }
+        transplant(rbTree, z, y);                   // y ocupa posicion de z
+        y->left = z->left;                          // redefinir hijo izquierdp
+        y->left->parent = y;
+        y->color = z->color;                        // cambiar color de y al color de z
+
+    }
+    if (y_org_col == 'B')                       // si color original de y era negro, se pudo ocasionar una violacion
+        deleteFixup(rbTree, x);
+
+    free(z);                                    // free z memory
+}
+
+void delete(RBTree *rbTree, int key){
+    Nodo *deleteNode = search(rbTree, key);
+    if (deleteNode!= rbTree->NIL){
+        deleteTreeNode(rbTree, deleteNode);
+        printf("value %d deleted\n", key);
+    }
+}
+
+
 // metodos utiles para probar buen funcionamiento
 
 int getNodeHeight(RBTree *rbTree, Nodo *root){
@@ -177,7 +306,6 @@ int getBlackNodeHeight(RBTree *rbTree, Nodo *root){
     if (left_h != right_h){
         printf("ERROR: RED-BLACK PROPERTY 5 violated\n");
     }
-
     return root->color == 'B' ? left_h + 1 : left_h;
 }
 
@@ -187,6 +315,7 @@ void traverseNode(RBTree *rbTree, Nodo *root){
         return;
 
     // in order traverse
+
     traverseNode(rbTree, root->left);
     printf("%d\n", root->key);
     traverseNode(rbTree, root->right);
