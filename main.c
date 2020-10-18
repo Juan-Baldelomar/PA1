@@ -1,12 +1,7 @@
 #include <stdio.h>
-#include "time.h"
-#include "stdlib.h"
+#include <time.h>
+#include <stdlib.h>
 #include "arbolRN.h"
-
-int getRandom(int base, int limit) {
-    return base + rand() % (limit - base + 1);
-}
-
 
 void testProperty4(RBTree *rbTree, Nodo *root){
     if (root == rbTree->NIL)
@@ -64,12 +59,34 @@ void testTreeInsertion3(){
     printf("testing property 4\n");
     testProperty4(rbTree, rbTree->root);
 }
-
-
+int testTools_simple(){
+	RBTree *tree=NULL;
+	int keys[]={1,2,3,4,5,6,7,8,9,10};
+	int values[]={10,9,8,7,6,5,4,3,2,1};
+	int flag=1;
+	if(isEmpty(tree)!=-1) flag = 0;
+	tree = createTree();
+	if(isEmpty(tree)!=1) flag = 0;
+	for(int i=0; i<10; i++){
+		put(tree,keys[i],values[i]);
+		if(contains(tree,keys[i])!=1){
+			printf("Error in contains\n");
+			flag = 0;}
+		if(size(tree)!=keys[i]){
+			printf("Error in size\n");
+			 flag = 0;}
+		if(get(tree,keys[i])!=values[i]){
+			printf("Error in get\n");
+			flag = 0;}
+	}
+	if(contains(tree,11)!=0) flag=0;
+	return flag;
+}
 int main() {
     srand(time(0));
     testTreeInsertion();
     testTreeInsertion2();
     testTreeInsertion3();
+    printf("Should be 1: %d\n",testTools_simple());
     return 0;
 }

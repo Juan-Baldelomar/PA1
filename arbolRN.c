@@ -202,3 +202,61 @@ int getHeight(RBTree *rbTree){
 int getBlackHeight(RBTree *rbTree){
     return getBlackNodeHeight(rbTree, rbTree->root);
 }
+int countNodes(RBTree *t,Nodo *n){
+	if(n == t->NIL)
+		return 0;
+	else
+		return countNodes(t,n->left)+countNodes(t,n->right)+1;
+}
+int size(RBTree *t){
+	if(t==NULL)
+		return -1;
+	else{
+		return countNodes(t,t->root);
+	}
+}
+
+int isEmpty(RBTree *t){
+	if(t==NULL) return -1;
+	else if(t->root==t->NIL) return 1;
+	return 0;
+}
+
+int contains(RBTree *t, int key){
+	int flag=0;	//Assume that key is not in tree
+	Nodo *x;
+	if(isEmpty(t)==0){
+		x = t->root;
+		while(x!=t->NIL){
+			if(x->key == key){
+				flag = 1;
+				break;
+			}
+			else if(key < x->key)
+				x = x->left;
+			else
+				x = x->right;
+		}
+	}
+	return flag;
+}
+int get(RBTree *t, int key){
+	Nodo *x;
+	int val=-1;
+	if(isEmpty(t)!=0){
+		printf("Empty tree or pointer to tree is NULL\n");
+		return -1;
+	}
+	x = t->root;
+	while(x!=t->NIL){
+		if(x->key == key){
+			val = x->val;
+			break;
+		}
+		else if(key < x->key)
+			x = x->left;
+		else
+			x = x->right;
+	}
+	return val;
+}

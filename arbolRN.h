@@ -36,5 +36,5 @@ int size(RBTree *rbTree);
 void traverse(RBTree *rbTree);
 int getHeight(RBTree *rbTree);
 int getBlackHeight(RBTree *rbTree);
-
+int countNodes(RBTree *t,Nodo *n)
 #endif //PA1_T9_ARBOLRN_H
