@@ -241,6 +241,7 @@ void put(RBTree *rbTree, int key, int val){
     z->left = rbTree->NIL;          //define children for new node
     z->right = rbTree->NIL;
     insertFixup(rbTree, z);
+    rbTree->treeSize++;
 }
 
 
