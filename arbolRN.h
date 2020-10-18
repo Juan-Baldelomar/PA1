@@ -28,6 +28,7 @@ RBTree *createTree();
 void put(RBTree *rbTree, int key, int val);
 int get(RBTree *rbTree, int key);
 int contains(RBTree *rbTree, int key);
+Nodo* search(RBTree *rbTree, int key);
 void delete(RBTree *rbTree, int key);
 int isEmptry(RBTree *rbTree);
 int size(RBTree *rbTree);
