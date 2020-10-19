@@ -27,7 +27,22 @@ RBTree *createTree(){
     rbTree->NIL = createNode(0, 0);
     rbTree->NIL->color = 'B';
     rbTree->root = rbTree->NIL;
+    rbTree->treeSize = 0;
     return rbTree;
+}
+
+void freeSubTree(RBTree *rbTree, Nodo *root){
+    if (root = rbTree->NIL)
+        return;
+    freeSubTree(rbTree, root->left);
+    freeSubTree(rbTree, root->right);
+    free(root);
+}
+
+void freeTree(RBTree **rbTree){
+    freeSubTree(*rbTree, (*rbTree)->root);
+    free((*rbTree)->NIL);
+    free(*rbTree);
 }
 
 
@@ -284,6 +299,7 @@ void delete(RBTree *rbTree, int key){
     if (deleteNode!= rbTree->NIL){
         deleteTreeNode(rbTree, deleteNode);
         printf("value %d deleted\n", key);
+        rbTree->treeSize--;
     }
 }
 
@@ -306,6 +322,7 @@ int getBlackNodeHeight(RBTree *rbTree, Nodo *root){
 
     if (left_h != right_h){
         printf("ERROR: RED-BLACK PROPERTY 5 violated\n");
+        return -1;
     }
     return root->color == 'B' ? left_h + 1 : left_h;
 }
@@ -342,7 +359,7 @@ int size(RBTree *t){
 	if(t==NULL)
 		return -1;
 	else{
-		return countNodes(t,t->root);
+		return t->treeSize;
 	}
 }
 

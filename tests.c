@@ -13,21 +13,23 @@ int getRandom(int base, int limit) {
     return base + rand() % (limit - base + 1);
 }
 
-void testProperty4(RBTree *rbTree, Nodo *root){
+int testProperty4(RBTree *rbTree, Nodo *root){
     if (root == rbTree->NIL)
-        return;
+        return 1;
     if (root->color == 'R'){
         if (root->left->color != 'B' && root->right->color != 'B'){
             printf("ERROR: propery 4 violated \n");
+            return 0;
         }
     }
-    testProperty4(rbTree, root->left);
-    testProperty4(rbTree, root->right);
+    int r = testProperty4(rbTree, root->left);
+    return r * testProperty4(rbTree, root->right);
 }
 
 
-void testTreeInsertion(){
+int testTreeInsertion(){
     RBTree *rbTree = createTree();
+    int status = 1;
     int n = 100;
     for (int i = 0; i<n; i++){
         put(rbTree, 100-i, 100-i);
@@ -37,12 +39,17 @@ void testTreeInsertion(){
     int black_h = getBlackHeight(rbTree);
     printf("height: %d  black height: %d\n", height, black_h);
     printf("testing property 4\n");
-    testProperty4(rbTree, rbTree->root);
+
+    status &= (black_h>-1);
+    status &= testProperty4(rbTree, rbTree->root);
+    freeTree(&rbTree);
+    return status;
 }
 
-void testTreeInsertion2(){
+int testTreeInsertion2(){
     RBTree *rbTree = createTree();
     int n = 100;
+    int status = 1;
     for (int i = 0; i<n; i++){
         put(rbTree, i, i);
     }
@@ -51,12 +58,17 @@ void testTreeInsertion2(){
     int black_h = getBlackHeight(rbTree);
     printf("height: %d  black height: %d\n", height, black_h);
     printf("testing property 4\n");
-    testProperty4(rbTree, rbTree->root);
+
+    status &= (black_h>-1);
+    status &= testProperty4(rbTree, rbTree->root);
+    freeTree(&rbTree);
+    return status;
 }
 
-void testTreeInsertion3(){
+int testTreeInsertion3(){
     RBTree *rbTree = createTree();
     int n = 100;
+    int status = 1;
     for (int i = 0; i<n; i++){
         int x = getRandom(1, 100);
         put(rbTree, x, x);
@@ -66,7 +78,10 @@ void testTreeInsertion3(){
     int black_h = getBlackHeight(rbTree);
     printf("height: %d  black height: %d\n", height, black_h);
     printf("testing property 4\n");
-    testProperty4(rbTree, rbTree->root);
+    status &= (black_h>-1);
+    status &= testProperty4(rbTree, rbTree->root);
+    freeTree(&rbTree);
+    return status;
 }
 
 int testTools_simple(){
@@ -90,14 +105,16 @@ int testTools_simple(){
             flag = 0;}
     }
     if(contains(tree,11)!=0) flag=0;
+    freeTree(&tree);
     return flag;
 }
 
 
 
-void testTreeDeletion(){
+int testTreeDeletion(){
     RBTree *rbTree = createTree();
     int n = 100;
+    int status = 1;
     int nodesToDelete[100];
     for (int i = 0; i<n; i++){
         int x = getRandom(1, 100);
@@ -115,12 +132,16 @@ void testTreeDeletion(){
     int black_h = getBlackHeight(rbTree);
     printf("height: %d  black height: %d\n", height, black_h);
     printf("testing property 4\n");
-    testProperty4(rbTree, rbTree->root);
+    status &= (black_h>-1);
+    status &= testProperty4(rbTree, rbTree->root);
+    freeTree(&rbTree);
+    return status;
 }
 
-void testTreeDeletion2(){
+int testTreeDeletion2(){
     RBTree *rbTree = createTree();
     int n = 100;
+    int status = 1;
     int nodesToDelete[100];
     for (int i = 0; i<n; i++){
         int x = getRandom(1, 100);
@@ -132,44 +153,32 @@ void testTreeDeletion2(){
         delete(rbTree, nodesToDelete[i]);
     }
 
-    traverse(rbTree);
-    int height = getHeight(rbTree);
-    int black_h = getBlackHeight(rbTree);
-    printf("height: %d  black height: %d\n", height, black_h);
-    printf("testing property 4\n");
-    testProperty4(rbTree, rbTree->root);
-}
-
-void testTreeDeletion3(){
-    RBTree *rbTree = createTree();
-    int n = 100;
-    int nodesToDelete[100];
-    put(rbTree, 2, 2);
     put(rbTree, 1, 1);
-    put(rbTree, 3, 3);
-
-    Nodo *nodo = search(rbTree, 1);
-    nodo->color = 'B';
-    nodo = search(rbTree, 3);
-    nodo->color = 'B';
-
-    delete(rbTree, 1);
 
     traverse(rbTree);
     int height = getHeight(rbTree);
     int black_h = getBlackHeight(rbTree);
     printf("height: %d  black height: %d\n", height, black_h);
     printf("testing property 4\n");
-    testProperty4(rbTree, rbTree->root);
+    status &= (black_h>-1);
+    status &= testProperty4(rbTree, rbTree->root);
+    freeTree(&rbTree);
+    return status;
 }
+
 
 
 int main() {
+    printf("***************************************************************** INIT TESTS *****************************************************************\n");
     srand(time(0));
-    //testTreeInsertion();
-    //testTreeInsertion2();
-    //testTreeInsertion3();
-    testTreeDeletion2();
-    printf("Should be 1: %d\n",testTools_simple());
+    int all_tests_ok;
+    all_tests_ok = testTreeInsertion();
+    all_tests_ok &= testTreeInsertion2();
+    all_tests_ok &= testTreeInsertion3();
+    all_tests_ok &= testTreeDeletion();
+    all_tests_ok &= testTreeDeletion2();
+    all_tests_ok &= testTools_simple();
+    printf("******************************************************* ASSERT TESTS *************************************************************\n");
+    assert(all_tests_ok);
     return 0;
 }
