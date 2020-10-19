@@ -1,0 +1,7 @@
+
+RUN SECTION:
+# makefile contains a section to do memcheck with valgrind.
+# if valgrind is not intalled, just remove the call to memcheck in the 1st line of makefile
+
+CODE SECTION:
+# also, search method implemented to return NIL insted of -1 that can be a valid value to return with integers.

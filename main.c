@@ -8,6 +8,7 @@ int getRandom(int base, int limit) {
 }
 
 int main(){
+    printf(" ********************************************** INIT EXECUTION **********************************************\n");
     RBTree *rbTree = createTree();
     Nodo *nodo;
     int n = 100;
@@ -52,6 +53,7 @@ int main(){
     }
 
     printf("Is Tree Empty:%d\n", isEmpty(rbTree));
+    printf(" ********************************************** TREE IN ORDER **********************************************\n");
     traverse(rbTree);
 
     freeTree(&rbTree);

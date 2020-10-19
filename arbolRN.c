@@ -335,12 +335,13 @@ void traverseNode(RBTree *rbTree, Nodo *root){
     // in order traverse
 
     traverseNode(rbTree, root->left);
-    printf("%d\n", root->key);
+    printf("%d  ", root->key);
     traverseNode(rbTree, root->right);
 }
 
 void traverse(RBTree *rbTree){
     traverseNode(rbTree, rbTree->root);
+    printf("\n");
 }
 
 int getHeight(RBTree *rbTree){
