@@ -32,7 +32,7 @@ RBTree *createTree(){
 }
 
 void freeSubTree(RBTree *rbTree, Nodo *root){
-    if (root = rbTree->NIL)
+    if (root == rbTree->NIL)
         return;
     freeSubTree(rbTree, root->left);
     freeSubTree(rbTree, root->right);

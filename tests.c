@@ -177,13 +177,16 @@ int testTreeFunction(){
         delete(tree,i);
     for(int i=0; i<1000; i+=2)
         if(contains(tree,i)==1) flag*=0;
+
+
+    freeTree(&tree);
     return flag;
 }
 
 int main() {
     printf("***************************************************************** INIT TESTS *****************************************************************\n");
     srand(time(0));
-    int all_tests_ok;
+    int all_tests_ok = 1;
     all_tests_ok = testTreeInsertion();
     all_tests_ok &= testTreeInsertion2();
     all_tests_ok &= testTreeInsertion3();
