@@ -30,7 +30,7 @@ int get(RBTree *rbTree, int key);
 int contains(RBTree *rbTree, int key);
 Nodo* search(RBTree *rbTree, int key);
 void delete(RBTree *rbTree, int key);
-int isEmptry(RBTree *rbTree);
+int isEmpty(RBTree *rbTree);
 int size(RBTree *rbTree);
 
 // funciones utiles
