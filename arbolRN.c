@@ -329,15 +329,15 @@ void traverse(RBTree *rbTree){
 int getHeight(RBTree *rbTree){
     return getNodeHeight(rbTree, rbTree->root);
 }
+
 int getBlackHeight(RBTree *rbTree){
     return getBlackNodeHeight(rbTree, rbTree->root);
 }
-int countNodes(RBTree *t,Nodo *n){
-	if(n == t->NIL)
-		return 0;
-	else
-		return countNodes(t,n->left)+countNodes(t,n->right)+1;
+
+int countNodes(RBTree *t, Nodo *n){
+	return t->treeSize;
 }
+
 int size(RBTree *t){
 	if(t==NULL)
 		return -1;
@@ -347,8 +347,10 @@ int size(RBTree *t){
 }
 
 int isEmpty(RBTree *t){
-	if(t==NULL) return -1;
-	else if(t->root==t->NIL) return 1;
+	if(t==NULL)
+	    return -1;
+	else if(t->root==t->NIL)
+	    return 1;
 	return 0;
 }
 
