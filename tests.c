@@ -166,7 +166,19 @@ int testTreeDeletion2(){
     return status;
 }
 
-
+int testTreeFunction(){
+    int flag=1;
+    RBTree *tree;
+    tree = createTree();
+    for(int i=0; i<1000; i++)
+        put(tree,i,999-i);
+    if(size(tree)!=1000) flag*=0;
+    for(int i=0; i<1000; i+=2)
+        delete(tree,i);
+    for(int i=0; i<1000; i+=2)
+        if(contains(tree,i)==1) flag*=0;
+    return flag;
+}
 
 int main() {
     printf("***************************************************************** INIT TESTS *****************************************************************\n");
@@ -178,6 +190,7 @@ int main() {
     all_tests_ok &= testTreeDeletion();
     all_tests_ok &= testTreeDeletion2();
     all_tests_ok &= testTools_simple();
+    all_tests_ok &= testTreeFunction();
     printf("******************************************************* ASSERT TESTS *************************************************************\n");
     assert(all_tests_ok);
     return 0;
