@@ -23,18 +23,20 @@ typedef struct ArbolRNStruct{
 
 Nodo *createNode(int key, int val);
 RBTree *createTree();
+void freeTree(RBTree **rbTree);
 
 // tabla de simbolos
 void put(RBTree *rbTree, int key, int val);
 int get(RBTree *rbTree, int key);
 int contains(RBTree *rbTree, int key);
+Nodo* search(RBTree *rbTree, int key);
 void delete(RBTree *rbTree, int key);
-int isEmptry(RBTree *rbTree);
+int isEmpty(RBTree *rbTree);
 int size(RBTree *rbTree);
 
 // funciones utiles
 void traverse(RBTree *rbTree);
 int getHeight(RBTree *rbTree);
 int getBlackHeight(RBTree *rbTree);
-
+int countNodes(RBTree *t,Nodo *n);
 #endif //PA1_T9_ARBOLRN_H

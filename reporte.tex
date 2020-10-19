@@ -1,0 +1,297 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage[left=25mm,top=25mm,right=25mm,bottom=25mm,includehead,nofoot,headheight=0pt,headsep=5mm]{geometry}
+\bibliographystyle{plainnat}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt}
+\renewcommand{\baselinestretch}{1.0}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{authblk}
+\usepackage{fancyhdr}
+\usepackage{tikz}
+\usepackage[linguistics]{forest,adjustbox}
+\usepackage{pgfplots}
+\usepackage{multicol}
+\usepackage{wrapfig}
+\usepackage{tikz-3dplot}
+\usepackage{hyperref}
+\usepackage[ruled,vlined]{algorithm2e}
+\usepackage[font=small,labelfont=bf,tableposition=top]{caption}
+\usepackage[font=footnotesize]{subcaption}
+\usepackage{mathtools}
+\usetikzlibrary{arrows}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{C16PRG1 Programaci\'on y algoritmos}
+\rhead{Agosto 2020 - Enero 2021}
+
+\title{Programaci\'on y algoritmos\\ Tarea 09}
+\author[1]{Juan Luis Baldelomar Cabrera\thanks{juan.baldelomar@cimat.mx}}
+\author[1]{Abdiel Ulises Beltran Aranda\thanks{abdiel.beltran@cimat.mx}}
+\affil[1]{Centro de Investigaci\'on en Matem\'aticas}
+\date{1 de octubre de 2020}
+
+\begin{document}
+\maketitle
+\thispagestyle{fancy}
+
+%Definimos los nodos para usar dentro de tkzpicture
+%Estructura tomada de https://texample.net/tikz/examples/red-black-tree/
+\tikzset{
+  treenode/.style = {align=center, inner sep=0pt, text centered,
+    font=\sffamily},
+  rbt_n/.style = {treenode, circle, white, font=\sffamily\bfseries, draw=black,fill=black, text width=1.5em},% black node
+  rbt_r/.style = {treenode, circle, red, draw=red, 
+    text width=1.5em, very thick},% red node
+  rbt_l/.style = {treenode, rectangle, draw=black,
+    minimum width=0.5em, minimum height=0.5em},% leaf/nil node
+  rbt/.style ={treenode, circle, black,draw=black, text width=1.5em,very thick}
+}
+
+\section*{Introducci\'on}
+Un \'arbol rojo-negro es un \'arbol binario de b\'usqueda. Un \'arbol binario de b\'usqueda cumple para cualquier nodo arbitrario $x$ del \'arbol con la siguiente propiedad: si $y$ es un nodo en el sub-\'arbol a la izquierda de $x$, entonces $y.key\leq x.key$ y si $y$ es un nodo en el sub-\'arbol a la derecha de $x$, entonces $y.key\geq x.key$. Adicionalmente, un \'arbol de b\'usqueda rojo-negro tiene un atributo extra denominado \textit{color}, el cual puede ser rojo o negro. Las propiedades de un \'arbol de b\'usqueda rojo-negro son las siguientes:
+\begin{enumerate}
+    \item Cualquier nodo es negro o rojo.
+    \item El nodo ra\'iz es negro.
+    \item Todas las hojas son negras.
+    \item Si un nodo es rojo, entonces sus dos hijos son negros.
+    \item Para cualquier nodo, todos los caminos simples desde el nodo hacia las hojas tienen el mismo n\'umero de nodos negros.
+\end{enumerate}
+
+Denominamos el n\'umero de nodos negros dentro de cualquier camino simple desde el nodo $x$, sin incluirlo, hacia una hoja como \textbf{altura negra} del nodo $x$ y la denotamos por $h_b(x)$.
+
+\section*{Problema 1}
+Ya que, por construcci\'on, un nodo rojo tiene dos nodos hijos de color negro, el n\'umero m\'inimo de nodos negros en un camino simple desde la ra\'iz hacia una hoja es $h/2$, donde $h$ es la altura del \'arbol. Este caso corresponde a tener de manera intermitente un nodo negro, nodo rojo, nodo negro, $\cdots$, nodo negro. Donde el \'ultimo nodo negro corresponde a una hoja del \'arbol. Por lo tanto concluimos que, para el nodo ra\'iz de un \'arbol rojo-negro de altura $h$ se cumple
+\begin{equation}
+    b_h(r) \geq \frac{h}{2}
+\end{equation}
+
+\section*{Problema 2}
+Comenzamos con el caso base. Si $v$ es un nodo hoja del \'arbol, entonces el n\'umero de nodos en su sub-\'arbol debe ser cero. Lo cual se cumple con la relaci\'on dada ya que $b_h{v}=0$, por lo tanto $n_v=2^{0}-1=0$. Consideramos ahora un nodo cualquiera $x$ del \'arbol, y asumimos que la relaci\'on se cumple para los dos hijos de $x$. Si un hijo es rojo tiene altura negra $b_h(x)$, y si es negro tiene altura negra $b_h{x}-1$. Ya que la relaci\'on nos dice que tenemos "al menos"\space cierto n\'mero de nodos, tomamos el caso en que ambos hijos tienen la menor altura negra posible. Entonces, el n\'umero de nodos dentro del sub-\'arbol en el nodo $x$ ser\'a al menos $n_{left}+n_{right}+1$.
+\begin{equation}
+(2^{b_h(x)-1}-1)+(2^{b_h(x)-1}-1)+1= \frac{2^{b_h(x)}}{2}+\frac{2^{b_h(x)}}{2}-2+1=2^{b_h(x)}-1
+\end{equation}
+
+\section*{Problema 3}
+Si la relaci\'on anterior se cumple para todos los nodos, entonces tambi\'en se cumple para el nodo ra\'iz. Del problema 1, sabemos que la altura negra del \'arbol es al menos $h/2$. Por lo tanto, el n\'umero total de nodos debe satisfacer
+\begin{align*}
+    n&\geq 2^{h/2}-1\\
+    n+1&\geq 2^{h/2}\\
+    \log_2(n+1)&\geq h/2\\
+ 2\log_2(n+1) &\geq h
+\end{align*}
+
+\section*{Problema 4}
+Si insertamos un nuevo nodo de la misma forma en que se inserta para un \'arbol binario de b\'usqueda, entonces por construcci\'on el \'arbol rojo-negro mantiene la estructura de un \'arbol binario de b\'usqueda. La primer propiedad se mantiene, ya que ser\'a de color rojo o negro. La segunda propiedad se cumple ya que, si su lugar es la ra\'iz, su color es negro. Si todos los nodos hojas apuntan a un nodo especial, de color negro, cuyos par\'ametros \textit{left} y \textit{right} son NULL, entonces la propiedad 3 se mantiene. Ya que el nuevo nodo es de color rojo, no altera el n\'umero de nodos negros en cualquier camino que contenga al nuevo nodo, por lo cual la propiedad 5 se mantiene. Pero, si el padre del nuevo nodo (una vez colocado en el \'arbol) es de color rojo, entonces la propiedad 4 no se mantiene.
+
+\section*{Problema 5}
+Estamos en el supuesto en que el nodo padre del nuevo nodo $x$ es rojo, as\'i como el t\'io de $x$ tambi\'en es rojo. Entonces, por construcci\'on, el abuelo de $x$ debe ser negro para que el estado anterior a la inserci\'on de $x$ sea v\'alido. Si hacemos la correcci\'on en la cual el abuelo cambia a color rojo y sus dos hijos a color negro, la altura negra a nivel abuelo se incrementa en 1 para ambos caminos hacia un nodo hoja. Por otro lado, la altura negra para el nodo padre y el nodo t\'io de $x$ no cambia pues $h_b$ no toma en cuenta el color del nodo inicial. La altura negra de cualquier nodo por encima del abuelo de $x$ tampoco cambia ya que ambos caminos que inclu\'ian antes al abuelo, este sumaba 1 a $hb$, despu\'es de la correcci\'on ese 1 ahora es aportado por el nodo padre de $x$ para ese camino y por el nodo t\'io para el otro camino.\newline
+
+Una posible violaci\'on a las propiedades del \'arbol rojo-negro, es cuando el padre del nodo abuelo de $x$ es rojo, ya que volvemos a tener el mismo problema en el cual un nodo rojo tiene un hijo rojo. En el peor de los casos vamos a tener que seguir cambiando los colores hasta llegar a la ra\'iz. Ya que al cambiar los colores subimos 2 niveles del \'arbol, el correspondiente a $x$ y a su padre, y la altura m\'axima de un \'arbol rojo-negro es de $2\log_2(n+1)$, la complejidad en el peor caso es como $O(\log(n+1))$.
+
+\section*{Problema 6}
+En el caso de rotaci\'on derecha, la idea es pasar el hijo izquierdo de $y$, el cual llamamos $x$, a la posici\'n de $y$ y a la vez cambiar el hijo derecho de $x$ en la posici\'on del hijo izquierdo de $y$ para mantener la estructura de \'arbol de b\'usqueda. En el caso de rotaci\'on izquierda, la idea es pasar el hijo derecho del nodo $x$, el cual llamamos $y$, a la posici\'n de $x$ y a la vez movemos el hijo izquierdo de $y$ a la posici\'on del hijo derecho de $x$ para mantener la estructura de \'arbol de b\'usqueda. Lo anterior lo podemos visualizar de la siguiente manera.\newline
+
+\hspace{1.5cm}
+\begin{tikzpicture}[->,>=stealth,level/.style={sibling distance = 4cm/#1,level distance = 1.5cm}] 
+    \node[rbt]{y}
+    child{ node[rbt]{x}
+        child{ node[rbt_n]{$\alpha$}
+        }
+        child{ node[rbt_n]{$\beta$}
+        }
+    }
+    child{ node[rbt_n]{$\gamma$}
+    }
+\end{tikzpicture}
+\hspace{1cm}
+\begin{tikzpicture}[->,>=stealth,level/.style={sibling distance = 4cm/#1,level distance = 1.5cm}] 
+    \node[rbt]{x}
+    child{node[rbt_n]{$\alpha$}
+    }
+    child{node[rbt]{y}
+        child{node[rbt_n]{$\beta$}
+        }
+        child{node[rbt_n]{$\gamma$}
+        }
+    }
+\end{tikzpicture}
+
+En la figura anterior a la estructura izquierda se le aplica una rotaci\'on derecha, resultando en la estructura derecha. A su vez, si a la estructura derecha se le aplica una rotaci\'on izquierda, se obtiene la estructura izquierda. Los nodos en relleno blanco indican los nodos sobre los que se hace la rotaci\'on.\newline
+
+Ahora, en el caso de arboles rojo-negro, hacemos rotaciones cuando agregamos un nuevo nodo, que denotamos por $z$, tal que el nodo padre de $z$ es rojo y el t\'io de $z$ es negro. Si antes de insertar el nodo $z$ el \'arbol estaba en un estado v\'alido, esto obliga a que el abuelo de $z$ sea un nodo negro. Denotamos al abuelo de $z$ como $A$ y al nodo padre de $z$ como $P$. Tenemos entonces 4 posibles casos: dependiendo de la posici\'on entre $P$ y $A$, as\'i como la posici\'on entre $P$ y $z$
+
+\subsection*{$P$ a la izquierda de $A$}
+El caso sencillo es cuando $z$ es el hijo izquierdo de $P$. Ya $A$ es de color negro, cambiamos el color de $P$ a negro y cambiamos el color de $A$ a rojo antes de hacer la rotaci\'on hacia la derecha sobre el nodo $A$ y $P$. Esto asegura que el nodo que queda en la posici\'on de abuelo ser\'a negro, por lo cual evitamos repetir el problema. Ya que antes de insertar $z$ el \'arbol est\'a en un estado v\'alido, significa que el nodo $P$ tiene un hijo derecho negro o NIL, en ambos casos el hijo derecho de $P$ es de color negro. Denotando por $T$ al t\'io de $z$, el proceso es el siguiente \newline 
+
+\begin{tikzpicture}[->,>=stealth,level/.style={sibling distance = 3cm/#1,level distance = 1.5cm}] 
+    \node[rbt_n]{A}
+    child{ node[rbt_r]{P}
+        child{ node[rbt_r]{z}
+        }
+        child{ node[rbt_n]{$\gamma$}
+        }
+    }
+    child{ node[rbt_n]{$T$}
+    }
+\end{tikzpicture}
+\hspace{1cm}
+\begin{tikzpicture}[->,>=stealth,level/.style={sibling distance = 3cm/#1,level distance = 1.5cm}] 
+    \node[rbt_r]{A}
+    child{ node[rbt_n]{P}
+        child{ node[rbt_r]{z}
+        }
+        child{ node[rbt_n]{$\gamma$}
+        }
+    }
+    child{ node[rbt_n]{$T$}
+    }
+\end{tikzpicture}
+\hspace{1cm}
+\begin{tikzpicture}[->,>=stealth,level/.style={sibling distance = 3cm/#1,level distance = 1.5cm}] 
+    \node[rbt_n]{P}
+    child{ node[rbt_r]{z}
+    }
+    child{ node[rbt_r]{$A$}
+        child{ node[rbt_n]{$\gamma$}
+        }
+        child{ node[rbt_n]{$T$}
+        }
+    }
+\end{tikzpicture}
+\vspace{1cm}
+
+Despu\'es de la rotaci\'on, la altura negra en la posici\'on original del nodo $P$ cambia a cero ya que el sub-\'arbol $\gamma$ se cambia al nodo $A$ al final. La altura negra del nodo $P$ original ser\'a la altura negra del nodo $A$ final si tomamos el camino de su hijo izquierdo. A lo largo de la rama que contiene al nodo $T$ en la configuraci\'on final, la altura negra no cambia con respecto a la posici\'on final de $P$, ya que en ambos casos esa rama conserva el mismo sub-\'arbol $T$.\newline 
+
+El segundo subcaso es cuando el nodo $z$ se agrega como hijo derecho de $P$. En este caso se debe hacer una rotaci\'on extra a la izquierda sobre el nodo $P$ para llegar al caso descrito arriba.
+
+\begin{tikzpicture}[->,>=stealth,level/.style={sibling distance = 3cm/#1,level distance = 1.5cm}] 
+    \node[rbt_n]{A}
+    child{ node[rbt_r]{P}
+        child{ node[rbt_n]{$\gamma$}
+        }
+        child{ node[rbt_r]{$z$}
+        }
+    }
+    child{ node[rbt_n]{$T$}
+    }
+\end{tikzpicture}
+\hspace{1cm}
+\begin{tikzpicture}[->,>=stealth,level/.style={sibling distance = 3cm/#1,level distance = 1.5cm}] 
+    \node[rbt_n]{A}
+    child{ node[rbt_r]{$z$}
+        child{ node[rbt_r]{$P$}
+                child{node[rbt_n]{$\gamma$}}
+                child{node[rbt_l]{}}
+        }
+        child{node[rbt_l]{}}
+    }
+    child{ node[rbt_n]{$T$}
+    }
+\end{tikzpicture}
+\hspace{1cm}
+\begin{tikzpicture}[->,>=stealth,level/.style={sibling distance = 3cm/#1,level distance = 1.5cm}] 
+    \node[rbt_n]{$z$}
+    child{ node[rbt_r]{$P$}
+        child{node[rbt_n]{$\gamma$}}
+        child{node[rbt_l]{}}
+    }
+    child{ node[rbt_r]{$A$}
+        child{node[rbt_l]{}}
+        child{node[rbt_n]{$T$}}
+    }
+\end{tikzpicture}
+\vspace{1cm}
+
+En este segundo caso se representan con cuadrados los nodos $NIL$ de $z$ y como cambian de lugar. En ambos subcasos el nodo $\gamma$ puede representar otro sub-\'arbol o un nodo $NIL$. En este subcaso la altura negra con respecto al nodo $A$ original, que ahora es el nodo $z$, no cambia en ninguno de los dos sub-arboles. Ya que una rotaci\'on solo implica cambiar apuntadores entre los nodos, en el pero caso en que son necesarias dos rotaciones la complejidad ser\'a constante $O(8)=O(1)$.
+
+\subsection*{$P$ a la derecha de $A$}
+El caso sencillo, en el que se necesita solo una rotaci\'on, tenemos a $z$ como hijo derecho de $P$. Mantenemos las etiquetas $T$ para el t\'io de $z$, $A$ para su abuelo y $\gamma$ para el posible sub-\'arbol restante de $P$. Nuevamente antes de hacer la rotaci\'on cambiamos el color de $A$ y $P$ para que el nodo que queda en la posici\'on de abuelo sea negro como el original y no tengamos que corregir hacia arriba nuevamente.
+
+\begin{tikzpicture}[->,>=stealth,level/.style={sibling distance = 3cm/#1,level distance = 1.5cm}] 
+    \node[rbt_n]{$A$}
+    child{ node[rbt_n]{$T$}
+    }
+    child{ node[rbt_r]{$P$}
+        child{node[rbt_n]{$\gamma$}
+        }
+        child{node[rbt_r]{$z$}
+        }
+    }
+\end{tikzpicture}
+\hspace{1cm}
+\begin{tikzpicture}[->,>=stealth,level/.style={sibling distance = 3cm/#1,level distance = 1.5cm}] 
+    \node[rbt_r]{$A$}
+    child{ node[rbt_n]{$T$}
+    }
+    child{ node[rbt_n]{$P$}
+        child{node[rbt_n]{$\gamma$}
+        }
+        child{node[rbt_r]{$z$}
+        }
+    }
+\end{tikzpicture}
+\hspace{1cm}
+\begin{tikzpicture}[->,>=stealth,level/.style={sibling distance = 3cm/#1,level distance = 1.5cm}] 
+    \node[rbt_n]{$P$}
+    child{ node[rbt_r]{$A$}
+        child{node[rbt_n]{$T$}
+        }
+        child{node[rbt_n]{$\gamma$}
+        }
+    }
+    child{ node[rbt_r]{$z$}
+    }
+\end{tikzpicture}
+\vspace{1cm}
+
+En este subcaso, la altura negra desde el nodo $A$ original (que ahora es $P$) a lo largo del sub-\'arbol $T$ no cambia. La altura negra a lo largo del camino que pasa por $z$ tampoco cambia con respecto a la posici\'on final $P$. La altura negra desde la posici\'on original de $P$ (y por ende tamb\'en con respecto a la posici\'on original de $A$), que pasa por posible sub-\'arbol $\gamma$ se hace cero. Esta misma altura negra $h_b(\gamma)$, ser\'a la altura negra con respecto a la posici\'on final de $P$ (y por lo tanto tambi\'en de $A$) a lo largo del camino que contiene al posible sub-\'arbol $\gamma$.\newline 
+
+Para el segundo subcaso, insertamos el nuevo nodo $z$ como hijo izquierdo del nodo $P$. Por lo tanto hay que hacer una rotac\'on hacia la derecha con respecto al nodo $P$ para obtener la misma estructura del subcaso anterior. Finalmente, posterior al cambio de color de $A$ y su hijo derecho, hacemos una rotaci\'on izquierda con respecto al nodo $A$.
+
+\begin{tikzpicture}[->,>=stealth,level/.style={sibling distance = 3cm/#1,level distance = 1.5cm}] 
+    \node[rbt_n]{$A$}
+    child{ node[rbt_n]{$T$}
+    }
+    child{ node[rbt_r]{$P$}
+        child{ node[rbt_r]{$z$}
+        }
+        child{ node[rbt_n]{$\gamma$}
+        }
+    }
+\end{tikzpicture}
+\hspace{1cm}
+\begin{tikzpicture}[->,>=stealth,level/.style={sibling distance = 3cm/#1,level distance = 1.5cm}] 
+    \node[rbt_n]{$A$}
+    child{ node[rbt_n]{$T$}
+    }
+    child{ node[rbt_r]{$z$}
+        child{node[rbt_l]{}}
+        child{node[rbt_r]{$P$}
+            child{node[rbt_l]{} }
+            child{node[rbt_n]{$\gamma$} }
+        }
+    }
+\end{tikzpicture}
+\hspace{1cm}
+\begin{tikzpicture}[->,>=stealth,level/.style={sibling distance = 3cm/#1,level distance = 1.5cm}] 
+    \node[rbt_n]{$z$}
+    child{ node[rbt_r]{$A$}
+        child{node[rbt_n]{$T$}}
+        child{node[rbt_l]{}}
+    }
+    child{ node[rbt_r]{$P$}
+        child{node[rbt_l]{}}
+        child{node[rbt_n]{$\gamma$}}
+    }
+\end{tikzpicture}
+\vspace{1cm}
+
+En este subcaso la altura negra no cambia con respecto a la posici\'on original de $A$ (donde queda $z$ al final), ya que a lo largo de la rama izquierda tenemos $h_b(T)$. A lo largo del camino derecho, en donde es\'a originalmente el posible sub-\'arbol $\gamma$, la altura negra sigue siendo $h_b(\gamma)$. En el peor caso se tienen que hacer dos rotaciones para llegar al estado final, ya que las rotaciones toman un n\'umero constante de operaciones para reasignar los apuntadores, la complejidad es constante $O(1)$.
+
+\end{document}
